@@ -1,0 +1,92 @@
+.menu {
+    width: 1440px;
+    height: 1277px;
+    margin: 0 auto;
+    background: #E9E9E3;
+}
+
+.menu-title {
+    position: relative;
+    top: 120px;
+    left: 56px;
+    color: #6F6F64;
+    font-family: 'Azeret Mono';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+}
+
+.menu-text {
+    width: 558px;
+    height: 135px;
+    position: relative;
+    left: 56px;
+    top: 107px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 45px;
+    color: #6F6F64;
+}
+
+.menu-buttons {
+    width: 531px;
+    height: 200px;
+    position: relative;
+    top: 148px;
+    left: 56px;
+}
+
+.menu-button {
+    width: 531px;
+    height: 58px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+    background: none;
+    border: 2px solid #6F6F64;
+    border-radius: 0px;
+
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 24px;
+    color: #6F6F64;
+    transition: .5s;
+}
+
+.menu-button:hover{
+    color: #FFFFFF;
+    background: #6F6F64;
+    transition: .3s;
+    cursor: pointer;
+}
+
+.menu-image-container {
+    width: 664px;
+    height: 1037px;
+    position: relative;
+    right: 56px;
+    bottom: 311px;
+    float: right;
+}
+
+.menu-image {
+    width: 664px;
+    max-height: 1037px;
+}
+
+@font-face {
+    font-family: 'Azeret Mono';
+    src: url(/AzeretMono.ttf);
+}
+@font-face {
+    font-family: 'Azeret Mono Italic';
+    src: url(/AzeretMono-Italic.ttf);
+}
+@font-face {
+    font-family: 'Inter';
+    src: url(/Inter.ttf);
+}

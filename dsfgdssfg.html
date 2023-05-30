@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+    <style>
+        img {
+            max-width: 300px;
+        }
+    </style>
+
+<div style="position: relative; width: 500px; height: 500px;">
+  <img id="img1" src="/food-menu.png" style="width: 100%; position: absolute; display: block;">
+  <img id="img2" src="img2.jpg" style="width: 100%; position: absolute; display: none;">
+  <img id="img3" src="img3.jpg" style="width: 100%; position: absolute; display: none;">
+</div>
+
+<button onclick="showImage('img1')">Show image 1</button>
+<button onclick="showImage('img2')">Show image 2</button>
+<button onclick="showImage('img3')">Show image 3</button>
+
+<script>
+function showImage(id) {
+  var images = ['img1', 'img2', 'img3'];
+
+  for (var i = 0; i < images.length; i++) {
+    var image = document.getElementById(images[i]);
+    if (images[i] === id) {
+      image.style.display = 'block';
+    } else {
+      image.style.display = 'none';
+    }
+  }
+}
+</script>
+
+</body>
+</html>
+В этом коде есть блок, содержащий три изображения, каждое из которых абсолютно позиционировано, чтобы они все находились в одном и том же месте. По умолчанию, все изображения невидимы (с display: none;).
+
+Также есть три кнопки, каждая из которых вызывает функцию showImage с идентификатором соответствующего изображения.
+
+Функция showImage проходит через все изображения и делает видимым только тот, идентификатор которого был передан в функцию. Все остальные изображения становятся невидимыми 

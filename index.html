@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <section class="menu">
+        <p class="menu-title">Menu</p>
+        <p class="menu-text">We change our menu every season. 
+            <br/> Here is what we are currently dishing up.</p>
+        <div class="menu-buttons">
+            <button onclick="showImage('food-menu')" class="menu-button">Food Menu</button>
+            <button onclick="showImage('drinks-menu')" class="menu-button">Drinks Menu</button>
+            <button onclick="showImage('takeaway-menu')" class="menu-button">Takeaway Menu</button>
+        </div>
+        <div class="menu-image-container">
+            <img id="food-menu" class="menu-image" src="/food-menu.png" alt="Food Menu" style="display: block;">
+            <img id="drinks-menu" class="menu-image" src="/just-image1.jpg" alt="Drinks Menu" style="display: none;">
+            <img id="takeaway-menu" class="menu-image" src="/just-image2.jpg" alt="Takeaway Menu" style="display: none;">
+        </div>
+    </section>
+
+    <script src="/script.js"></script>
+</body>
+</html>
