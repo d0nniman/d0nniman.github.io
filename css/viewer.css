@@ -11,7 +11,7 @@ body {
 }
 
 .wrapper {
-    min-width: 700px;
+    min-width: 300px;
     max-width: 1800px;
     margin: 0 auto;
     font-family: 'Inter';
@@ -32,16 +32,13 @@ body {
     font-size: 0.9rem;
 }
 
-.content-header div{
-    display: none;
-    
-}
+.content-header { display: flex; justify-content: space-between; }
 
 .upload-area:hover { border-color: var(--primary); background: #e0f2fe; }
 .upload-area.dragover { border-color: var(--primary); background: #bae6fd; }
 
 .main-content {
-    min-width: 600px;
+    min-width: 300px;
     max-width: 1000px;
     flex: 1;
     display: flex;
@@ -110,8 +107,6 @@ body {
 @media (max-width: 950px) {
     .main-content { padding: 1rem; }
     .chart-container { height: 150px; }
-    .content-header { display: flex; justify-content: space-around; }
-    .content-header div { display: flex; }
 }
 
 

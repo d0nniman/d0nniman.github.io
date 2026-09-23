@@ -13,16 +13,15 @@
 <body>
     <div class="wrapper">
         <div class="sidebar">
-            <div id="sidebar-inner">
+            <div class="sidebar-inner">
                 <h2 class="sidebar-name">Меню сайта</h2>
                 <ul>
                     <a href="/index.html"><li>GPX конвертер</li></a>
                     <a href="/gpx-viewer.html"><li>Обозреватель треков</li></a>
                 </ul>
             </div>
-            <div id="sidebar-inner">
             <!-- Статистика -->
-                <div class="stats-grid hidden" id="statsPanel">
+                <div class="stats-grid sidebar-inner hidden" id="statsPanel">
                     <div class="stat-card">
                         <div class="stat-value" id="statDist">0</div>
                         <div class="stat-label">Дистанция (км)</div>
@@ -40,11 +39,6 @@
                         <div class="stat-label">Точек в треке</div>
                     </div>
                 </div>
-                <div class="upload-area" id="dropZone">
-                    📂 Перетащите GPX файл или нажмите для выбора
-                    <input type="file" id="fileInput" accept=".gpx" style="display: none;">
-                </div>
-            </div>
         </div>
         <div class="main-content">
             <div class="content-header">

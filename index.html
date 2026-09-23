@@ -10,7 +10,7 @@
 <body>
 
     <div class="sidebar">
-        <div id="sidebar-inner">
+        <div class="sidebar-inner">
             <h2 class="sidebar-name">Меню сайта</h2>
             <ul>
                 <a href="/index.html"><li>GPX конвертер</li></a>
@@ -54,9 +54,8 @@
             Общая дистанция: <span id="totalDistance">0</span> км<br>
             <a id="downloadLink" class="download-btn" download="route.gpx">⬇️ Скачать GPX файл</a>
         </div>
+        <div id="warningBox" class="warning" style="max-width: 800px; margin: 1rem auto; padding: 0 1rem;"></div>
     </div>
-
-    <div id="warningBox" class="warning" style="max-width: 800px; margin: 1rem auto; padding: 0 1rem;"></div>
 
     <script src="/js/gpx-converter.js"></script>
 
