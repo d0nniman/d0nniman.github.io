@@ -7,374 +7,70 @@
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
-    <style>
-        :root {
-            --primary: #3498db;
-            --bg: #f8f9fa;
-            --card: #ffffff;
-            --text: #2c3e50;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
-        header {
-            background: var(--card);
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        h1 { margin: 0; font-size: 1.25rem; }
-
-        .upload-area {
-            border: 2px dashed #cbd5e1;
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: #f1f5f9;
-            font-size: 0.9rem;
-        }
-        .upload-area:hover { border-color: var(--primary); background: #e0f2fe; }
-        .upload-area.dragover { border-color: var(--primary); background: #bae6fd; }
-
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 1rem;
-            gap: 1rem;
-            overflow: hidden;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-        }
-
-        .stat-card {
-            background: var(--card);
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
-        .stat-label { font-size: 0.85rem; color: #64748b; margin-top: 0.25rem; }
-
-        .map-container {
-            flex: 1;
-            background: var(--card);
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            overflow: hidden;
-            position: relative;
-            min-height: 300px;
-        }
-
-        #map { width: 100%; height: 100%; }
-
-        .chart-container {
-            background: var(--card);
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            height: 200px;
-            position: relative;
-        }
-
-        .hidden { display: none; }
-        
-        /* Кастомные маркеры */
-        .start-icon { background-color: #27ae60; border-radius: 50%; border: 2px solid white; width: 12px; height: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-        .end-icon { background-color: #e74c3c; border-radius: 50%; border: 2px solid white; width: 12px; height: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-
-        /* Скрываем флаг в attribution */
-        .leaflet-attribution-flag {
-            display: none !important;
-        }
-        
-        .leaflet-control-attribution svg {
-            display: none !important;
-        }
-
-        @media (max-width: 768px) {
-            .main-content { padding: 0.5rem; }
-            .chart-container { height: 150px; }
-        }
-    </style>
+    <link rel="stylesheet" href="/css/viewer.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
 </head>
 <body>
-
-<header>
-    <h1>🗺️ GPX Viewer</h1>
-    <div class="upload-area" id="dropZone">
-        📂 Перетащите GPX файл или нажмите для выбора
-        <input type="file" id="fileInput" accept=".gpx" style="display: none;">
-    </div>
-</header>
-
-<div class="main-content">
-    <!-- Статистика -->
-    <div class="stats-grid hidden" id="statsPanel">
-        <div class="stat-card">
-            <div class="stat-value" id="statDist">0</div>
-            <div class="stat-label">Дистанция (км)</div>
+    <div class="wrapper">
+        <div class="sidebar">
+            <div id="sidebar-inner">
+                <h2 class="sidebar-name">Меню сайта</h2>
+                <ul>
+                    <a href="/index.html"><li>GPX конвертер</li></a>
+                    <a href="/gpx-viewer.html"><li>Обозреватель треков</li></a>
+                </ul>
+            </div>
+            <div id="sidebar-inner">
+            <!-- Статистика -->
+                <div class="stats-grid hidden" id="statsPanel">
+                    <div class="stat-card">
+                        <div class="stat-value" id="statDist">0</div>
+                        <div class="stat-label">Дистанция (км)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statElev">0</div>
+                        <div class="stat-label">Набор высоты (м)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statTime">0:00</div>
+                        <div class="stat-label">Время в пути</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statPoints">0</div>
+                        <div class="stat-label">Точек в треке</div>
+                    </div>
+                </div>
+                <div class="upload-area" id="dropZone">
+                    📂 Перетащите GPX файл или нажмите для выбора
+                    <input type="file" id="fileInput" accept=".gpx" style="display: none;">
+                </div>
+            </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-value" id="statElev">0</div>
-            <div class="stat-label">Набор высоты (м)</div>
+        <div class="main-content">
+            <div class="content-header">
+                <h2>🗺️ Обозреватель GPX треков</h2>
+                <div class="upload-area" id="dropZone">
+                    📂 Перетащите GPX файл или нажмите для выбора
+                    <input type="file" id="fileInput" accept=".gpx" style="display: none;">
+                </div>
+            </div>
+            <!-- Карта -->
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-value" id="statTime">0:00</div>
-            <div class="stat-label">Время в пути</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="statPoints">0</div>
-            <div class="stat-label">Точек в треке</div>
-        </div>
-    </div>
 
-    <!-- Карта -->
-    <div class="map-container">
-        <div id="map"></div>
+        <!-- График высот -->
+        <div class="chart-container hidden" id="chartPanel">
+            <canvas id="elevationChart"></canvas>
+        </div>
     </div>
-
-    <!-- График высот -->
-    <div class="chart-container hidden" id="chartPanel">
-        <canvas id="elevationChart"></canvas>
-    </div>
-</div>
 
 <!-- Библиотеки -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet-gpx@1.7.0/gpx.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-    // Инициализация карты без флага в attribution
-    const map = L.map('map', {
-        attributionControl: false
-    }).setView([55.75, 37.61], 5);
-    
-    // Добавляем кастомный attribution control без флага
-    L.control.attribution({
-        prefix: ''
-    }).addTo(map);
-    
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 19
-    }).addTo(map);
-
-    let currentGpxLayer = null;
-    let elevationChart = null;
-
-    // Элементы UI
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    const statsPanel = document.getElementById('statsPanel');
-    const chartPanel = document.getElementById('chartPanel');
-
-    // Обработчики Drag & Drop
-    dropZone.addEventListener('click', () => fileInput.click());
-    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-    });
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length) handleFile(e.target.files[0]);
-    });
-
-    function handleFile(file) {
-        if (!file.name.endsWith('.gpx')) {
-            alert('Пожалуйста, выберите файл с расширением .gpx');
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const gpxText = e.target.result;
-            loadGPX(gpxText);
-        };
-        reader.readAsText(file);
-    }
-
-    function loadGPX(gpxText) {
-        // Очистка предыдущего трека
-        if (currentGpxLayer) {
-            map.removeLayer(currentGpxLayer);
-        }
-
-        // Парсинг XML для статистики и графика
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(gpxText, "text/xml");
-        const trkpts = xmlDoc.getElementsByTagName("trkpt");
-        
-        const trackData = [];
-        let totalDist = 0;
-        let totalElevGain = 0;
-        let startTime = null;
-        let endTime = null;
-
-        for (let i = 0; i < trkpts.length; i++) {
-            const lat = parseFloat(trkpts[i].getAttribute("lat"));
-            const lon = parseFloat(trkpts[i].getAttribute("lon"));
-            const eleNode = trkpts[i].getElementsByTagName("ele")[0];
-            const timeNode = trkpts[i].getElementsByTagName("time")[0];
-
-            const ele = eleNode ? parseFloat(eleNode.textContent) : null;
-            const time = timeNode ? new Date(timeNode.textContent) : null;
-
-            if (i === 0) {
-                startTime = time;
-            } else {
-                const prev = trackData[i - 1];
-                const dist = haversineDistance(prev.lat, prev.lon, lat, lon);
-                totalDist += dist;
-                
-                if (ele !== null && prev.ele !== null) {
-                    const elevDiff = ele - prev.ele;
-                    if (elevDiff > 0) totalElevGain += elevDiff;
-                }
-            }
-            
-            endTime = time;
-            trackData.push({ lat, lon, ele, time, dist: totalDist });
-        }
-
-        // Отрисовка на карте через leaflet-gpx
-        const blob = new Blob([gpxText], { type: 'application/gpx+xml' });
-        const url = URL.createObjectURL(blob);
-        
-        currentGpxLayer = new L.GPX(url, {
-            async: true,
-            marker_options: {
-                startIconUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="%2327ae60" stroke="white" stroke-width="2"/></svg>',
-                endIconUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="%23e74c3c" stroke="white" stroke-width="2"/></svg>',
-                shadowUrl: '',
-                iconSize: [12, 12],
-                iconAnchor: [6, 6]
-            },
-            polyline_options: {
-                color: '#3498db',
-                opacity: 0.8,
-                weight: 4,
-                lineCap: 'round'
-            }
-        }).on('loaded', function(e) {
-            map.fitBounds(e.target.getBounds());
-        }).addTo(map);
-
-        // Обновление статистики
-        document.getElementById('statDist').textContent = (totalDist / 1000).toFixed(2);
-        document.getElementById('statElev').textContent = Math.round(totalElevGain);
-        document.getElementById('statPoints').textContent = trackData.length;
-        
-        if (startTime && endTime) {
-            const diffMs = endTime - startTime;
-            const hours = Math.floor(diffMs / 3600000);
-            const mins = Math.floor((diffMs % 3600000) / 60000);
-            document.getElementById('statTime').textContent = `${hours}ч ${mins}м`;
-        } else {
-            document.getElementById('statTime').textContent = "Н/Д";
-        }
-
-        statsPanel.classList.remove('hidden');
-        chartPanel.classList.remove('hidden');
-
-        // Построение графика
-        drawChart(trackData);
-    }
-
-    function drawChart(data) {
-        const ctx = document.getElementById('elevationChart').getContext('2d');
-        
-        // Прореживание точек для графика, если их слишком много (для производительности)
-        const step = Math.max(1, Math.floor(data.length / 200));
-        const chartData = data.filter((_, i) => i % step === 0 || i === data.length - 1);
-
-        const labels = chartData.map(d => (d.dist / 1000).toFixed(2));
-        const elevations = chartData.map(d => d.ele !== null ? d.ele : 0);
-
-        if (elevationChart) {
-            elevationChart.destroy();
-        }
-
-        elevationChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Высота (м)',
-                    data: elevations,
-                    borderColor: '#3498db',
-                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            title: (context) => `Дистанция: ${context[0].label} км`,
-                            label: (context) => `Высота: ${context.raw} м`
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        title: { display: true, text: 'Дистанция (км)' },
-                        ticks: { maxTicksLimit: 8 }
-                    },
-                    y: {
-                        title: { display: true, text: 'Высота (м)' },
-                        beginAtZero: false
-                    }
-                }
-            }
-        });
-    }
-
-    // Формула гаверсинусов для расчета расстояния
-    function haversineDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371000;
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                  Math.sin(dLon/2) * Math.sin(dLon/2);
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    }
-</script>
+<script src="/js/gpx-viewer.js"></script>
 
 </body>
 </html>

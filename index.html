@@ -4,347 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Конвертер маршрутов в GPX (по дорогам)</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-            background-color: #f5f5f5;
-            color: #333;
-        }
-        .container {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        h2 { margin-top: 0; color: #2c3e50; }
-        label { display: block; margin-top: 1rem; font-weight: 600; font-size: 0.9rem; }
-        textarea, select, input {
-            width: 100%;
-            padding: 0.75rem;
-            margin-top: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
-            box-sizing: border-box;
-        }
-        textarea { height: 100px; resize: vertical; font-family: monospace; }
-        button {
-            margin-top: 1.5rem;
-            width: 100%;
-            padding: 1rem;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        button:hover { background-color: #2980b9; }
-        button:disabled { background-color: #95a5a6; cursor: not-allowed; }
-        .result {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: #e8f4f8;
-            border-radius: 6px;
-            border-left: 4px solid #3498db;
-            display: none;
-        }
-        .download-btn {
-            display: inline-block;
-            margin-top: 1rem;
-            padding: 0.75rem 1.5rem;
-            background-color: #27ae60;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 600;
-        }
-        .download-btn:hover { background-color: #219653; }
-        .error { color: #e74c3c; font-weight: 600; margin-top: 1rem; display: none; }
-        .info { font-size: 0.85rem; color: #666; margin-top: 0.25rem; }
-        .loading {
-            display: none;
-            margin-top: 1rem;
-            text-align: center;
-            color: #3498db;
-            font-weight: 600;
-        }
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #3498db;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 1rem auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
 </head>
 <body>
 
-<div class="container">
-    <h2>🗺️ Конвертер Google/Yandex Maps в GPX</h2>
-    <p style="color: #666; font-size: 0.9rem;">✨ Теперь строит маршрут по реальным дорогам через OSRM!</p>
-    
-    <label for="urlInput">Ссылка на маршрут:</label>
-    <textarea id="urlInput" placeholder="https://www.google.com/maps/dir/56.870239,53.0001673/56.8983742,53.0454859/... или https://yandex.ru/maps/?rtext=~56.87..."></textarea>
-    <div class="info">Поддерживаются ссылки с координатами формата широта,долгота</div>
-
-    <label for="travelMode">Метод передвижения:</label>
-    <select id="travelMode">
-        <option value="foot">🚶 Пешком</option>
-        <option value="bike">🚴 Велосипед</option>
-        <option value="car" selected>🚗 Автомобиль</option>
-    </select>
-
-    <label for="timeInterval">Временной интервал между точками (секунды):</label>
-    <input type="number" id="timeInterval" value="10" min="1" max="3600">
-    <div class="info">Чем меньше значение, тем больше точек будет в треке</div>
-
-    <button onclick="convertToGPX()" id="convertBtn">Конвертировать в GPX</button>
-    
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
-        <div>Строю маршрут по дорогам...</div>
+    <div class="sidebar">
+        <div id="sidebar-inner">
+            <h2 class="sidebar-name">Меню сайта</h2>
+            <ul>
+                <a href="/index.html"><li>GPX конвертер</li></a>
+                <a href="/gpx-viewer.html"><li>Обозреватель треков</li></a>
+            </ul>
+        </div>
     </div>
-    
-    <div id="errorMsg" class="error"></div>
 
-    <div id="resultBox" class="result">
-        <strong>✅ Успешно!</strong><br>
-        Найдено опорных точек: <span id="waypointCount">0</span><br>
-        Сгенерировано точек трека: <span id="trackPointCount">0</span><br>
-        Общая дистанция: <span id="totalDistance">0</span> км<br>
-        <a id="downloadLink" class="download-btn" download="route.gpx">⬇️ Скачать GPX файл</a>
+    <div class="container">
+        <h2>🗺️ Конвертер Google/Yandex Maps в GPX</h2>
+        <p>Построение маршрута по реальным дорогам</p>
+
+        <label for="urlInput">Ссылка на маршрут:</label>
+        <textarea id="urlInput" placeholder="https://www.google.com/maps/dir/56.870239,53.0001673/56.8983742,53.0454859/... или https://yandex.ru/maps/?rtext=~56.87..."></textarea>
+        <div class="info">Поддерживаются ссылки с координатами формата широта, долгота</div>
+
+        <label for="travelMode">Метод передвижения:</label>
+        <select id="travelMode">
+            <option value="foot">🚶 На своих двоих</option>
+            <option value="bike">🚴 На велосипеде</option>
+            <option value="car" selected>🚗 На автомобиле</option>
+        </select>
+
+        <label for="timeInterval">Временной интервал между точками (секунды):</label>
+        <input type="number" id="timeInterval" value="10" min="1" max="3600">
+        <div class="info">Чем меньше значение, тем больше точек будет в треке</div>
+
+        <button onclick="convertToGPX()" id="convertBtn">Конвертировать в GPX</button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div>Строю маршрут по дорогам...</div>
+        </div>
+
+        <div id="errorMsg" class="error"></div>
+
+        <div id="resultBox" class="result">
+            <strong>✅ Успешно!</strong><br>
+            Найдено опорных точек: <span id="waypointCount">0</span><br>
+            Сгенерировано точек трека: <span id="trackPointCount">0</span><br>
+            Общая дистанция: <span id="totalDistance">0</span> км<br>
+            <a id="downloadLink" class="download-btn" download="route.gpx">⬇️ Скачать GPX файл</a>
+        </div>
     </div>
-</div>
 
-<script>
-    // Скорости в м/с для разных режимов
-    const SPEEDS = {
-        foot: 1.4,    // ~5 км/ч
-        bike: 4.2,    // ~15 км/ч
-        car: 16.7     // ~60 км/ч
-    };
+    <div id="warningBox" class="warning" style="max-width: 800px; margin: 1rem auto; padding: 0 1rem;"></div>
 
-    // Профили OSRM
-    const OSRM_PROFILES = {
-        foot: 'foot',
-        bike: 'bike',
-        car: 'driving'
-    };
-
-    function extractCoordinates(url) {
-        const regex = /(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+)/g;
-        const matches = [...url.matchAll(regex)];
-        
-        const points = [];
-        const seen = new Set();
-        
-        for (const match of matches) {
-            const lat = parseFloat(match[1]);
-            const lon = parseFloat(match[2]);
-            
-            if (lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
-                const key = `${lat.toFixed(5)},${lon.toFixed(5)}`;
-                if (!seen.has(key)) {
-                    seen.add(key);
-                    points.push({ lat, lon });
-                }
-            }
-        }
-        return points;
-    }
-
-    async function getRouteFromOSRM(points, profile) {
-        if (points.length < 2) {
-            throw new Error('Нужно минимум 2 точки для построения маршрута');
-        }
-
-        const osrmProfile = OSRM_PROFILES[profile] || 'driving';
-        const coordinates = points.map(p => `${p.lon},${p.lat}`).join(';');
-        const url = `https://router.project-osrm.org/route/v1/${osrmProfile}/${coordinates}?overview=full&geometries=geojson&alternatives=false`;
-
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`OSRM API error: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        if (!data.routes || data.routes.length === 0) {
-            throw new Error('Маршрут не найден. Проверьте координаты.');
-        }
-
-        return data.routes[0];
-    }
-
-    function interpolateRoute(routeGeometry, timeInterval, speed) {
-        const coordinates = routeGeometry.coordinates;
-        const distances = routeGeometry.distances || [];
-        
-        const trackPoints = [];
-        const startTime = new Date();
-        let currentTime = 0;
-        let totalDistance = 0;
-
-        // Если OSRM вернул distances, используем их
-        if (distances.length > 0) {
-            totalDistance = distances[distances.length - 1];
-        } else {
-            // Иначе считаем вручную
-            for (let i = 1; i < coordinates.length; i++) {
-                const d = haversineDistance(
-                    coordinates[i-1][1], coordinates[i-1][0],
-                    coordinates[i][1], coordinates[i][0]
-                );
-                totalDistance += d;
-            }
-        }
-
-        // Генерируем точки с заданным временным интервалом
-        const totalPoints = Math.ceil(totalDistance / (speed * timeInterval));
-        
-        for (let i = 0; i <= totalPoints; i++) {
-            const progress = i / totalPoints;
-            const point = getPointAlongRoute(coordinates, progress);
-            
-            const time = new Date(startTime.getTime() + (i * timeInterval * 1000));
-            
-            trackPoints.push({
-                lat: point[1].toFixed(6),
-                lon: point[0].toFixed(6),
-                time: time.toISOString()
-            });
-        }
-
-        return { trackPoints, totalDistance, duration: totalPoints * timeInterval };
-    }
-
-    function getPointAlongRoute(coordinates, progress) {
-        if (coordinates.length === 0) return [0, 0];
-        if (coordinates.length === 1) return coordinates[0];
-        if (progress <= 0) return coordinates[0];
-        if (progress >= 1) return coordinates[coordinates.length - 1];
-
-        const totalSegments = coordinates.length - 1;
-        const targetSegment = Math.floor(progress * totalSegments);
-        const segmentProgress = (progress * totalSegments) - targetSegment;
-
-        const start = coordinates[targetSegment];
-        const end = coordinates[Math.min(targetSegment + 1, coordinates.length - 1)];
-
-        return [
-            start[0] + (end[0] - start[0]) * segmentProgress,
-            start[1] + (end[1] - start[1]) * segmentProgress
-        ];
-    }
-
-    function haversineDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371000;
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                  Math.sin(dLon/2) * Math.sin(dLon/2);
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    }
-
-    async function convertToGPX() {
-        const url = document.getElementById('urlInput').value.trim();
-        const mode = document.getElementById('travelMode').value;
-        const intervalSec = parseInt(document.getElementById('timeInterval').value) || 10;
-        
-        const errorDiv = document.getElementById('errorMsg');
-        const resultBox = document.getElementById('resultBox');
-        const loading = document.getElementById('loading');
-        const btn = document.getElementById('convertBtn');
-
-        errorDiv.style.display = 'none';
-        resultBox.style.display = 'none';
-        loading.style.display = 'block';
-        btn.disabled = true;
-
-        try {
-            if (!url) {
-                throw new Error('Пожалуйста, вставьте ссылку');
-            }
-
-            const waypoints = extractCoordinates(url);
-            
-            if (waypoints.length < 2) {
-                throw new Error('Не удалось найти минимум 2 пары координат в ссылке');
-            }
-
-            // Получаем реальный маршрут из OSRM
-            const route = await getRouteFromOSRM(waypoints, mode);
-            
-            // Интерполируем точки вдоль маршрута
-            const { trackPoints, totalDistance, duration } = interpolateRoute(
-                route.geometry, 
-                intervalSec, 
-                SPEEDS[mode]
-            );
-
-            // Генерируем GPX
-            const gpx = generateGPX(trackPoints, mode, intervalSec);
-
-            // Показываем результаты
-            document.getElementById('waypointCount').textContent = waypoints.length;
-            document.getElementById('trackPointCount').textContent = trackPoints.length;
-            document.getElementById('totalDistance').textContent = (totalDistance / 1000).toFixed(2);
-            
-            const blob = new Blob([gpx], { type: 'application/gpx+xml' });
-            const urlObj = URL.createObjectURL(blob);
-            const downloadLink = document.getElementById('downloadLink');
-            downloadLink.href = urlObj;
-            downloadLink.download = `route_${mode}_${Date.now()}.gpx`;
-            
-            resultBox.style.display = 'block';
-
-        } catch (error) {
-            errorDiv.textContent = `❌ ${error.message}`;
-            errorDiv.style.display = 'block';
-        } finally {
-            loading.style.display = 'none';
-            btn.disabled = false;
-        }
-    }
-
-    function generateGPX(trackPoints, mode, interval) {
-        let gpx = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-        gpx += `<gpx version="1.1" creator="MapToGPX-OSRM" xmlns="http://www.topografix.com/GPX/1/1">\n`;
-        gpx += `  <metadata>\n`;
-        gpx += `    <name>Маршрут из Maps (по дорогам)</name>\n`;
-        gpx += `    <desc>Режим: ${mode}, интервал: ${interval}с</desc>\n`;
-        gpx += `    <time>${trackPoints[0]?.time || new Date().toISOString()}</time>\n`;
-        gpx += `  </metadata>\n`;
-        gpx += `  <trk>\n`;
-        gpx += `    <name>Основной трек</name>\n`;
-        gpx += `    <trkseg>\n`;
-        
-        for (const pt of trackPoints) {
-            gpx += `      <trkpt lat="${pt.lat}" lon="${pt.lon}">\n`;
-            gpx += `        <time>${pt.time}</time>\n`;
-            gpx += `      </trkpt>\n`;
-        }
-        
-        gpx += `    </trkseg>\n`;
-        gpx += `  </trk>\n`;
-        gpx += `</gpx>`;
-        
-        return gpx;
-    }
-</script>
+    <script src="/js/gpx-converter.js"></script>
 
 </body>
 </html>
