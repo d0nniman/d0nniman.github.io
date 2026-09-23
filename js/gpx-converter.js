@@ -31,8 +31,10 @@ function clearWarnings() {
 }
 
 function extractCoordinates(url) {
+    // Декодируем URL, чтобы превратить %2C обратно в обычные запятые
+    const decodedUrl = decodeURIComponent(url);
     const regex = /(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+)/g;
-    const matches = [...url.matchAll(regex)];
+    const matches = [...decodedUrl.matchAll(regex)];
     const points = [];
     const seen = new Set();
     

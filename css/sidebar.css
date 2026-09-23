@@ -1,5 +1,5 @@
 .sidebar {
-    width: 30%;
+    width: 30vw;
     min-width: 250px;
     max-width: 450px;
     float: left;
@@ -12,6 +12,8 @@
 }
 
 .sidebar-inner {
+    display: flex;
+    flex-direction: column;
     background: white;
     padding: 2rem;
     border-radius: 12px;
@@ -49,6 +51,29 @@
 
 @media screen and (max-width: 950px) {
     .sidebar {
+        margin: 0;
+        width: 90vw;
+    }
+    
+    .sidebar-inner {
+        padding: 1rem;
+        flex-direction: row;
+    }
+
+    .sidebar h2 {
         display: none;
+    }
+
+    .sidebar ul {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body {
+        flex-direction: column;
+    }
+
+    .container {
+        padding: 1rem;
     }
 }
