@@ -20,39 +20,43 @@
                     <a href="/gpx-viewer.html"><li>Обозреватель треков</li></a>
                 </ul>
             </div>
-            <!-- Статистика -->
-                <div class="stats-grid sidebar-inner hidden" id="statsPanel">
-                    <div class="stat-card">
-                        <div class="stat-value" id="statDist">0</div>
-                        <div class="stat-label">Дистанция (км)</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="statElev">0</div>
-                        <div class="stat-label">Набор высоты (м)</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="statTime">0:00</div>
-                        <div class="stat-label">Время в пути</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="statPoints">0</div>
-                        <div class="stat-label">Точек в треке</div>
-                    </div>
-                </div>
+            
         </div>
         <div class="main-content">
             <div class="content-header">
                 <h2>🗺️ Обозреватель GPX треков</h2>
-                <div class="upload-area" id="dropZone">
-                    📂 Перетащите GPX файл или нажмите для выбора
-                    <input type="file" id="fileInput" accept=".gpx" style="display: none;">
-                </div>
+                
             </div>
             <!-- Карта -->
             <div class="map-container">
                 <div id="map"></div>
             </div>
+                <div class="upload-area" id="dropZone">
+                    📂 Перетащите GPX файл или нажмите для выбора
+                    <input type="file" id="fileInput" accept=".gpx" style="display: none;">
+                </div>
+
+        <!-- Статистика -->
+            <div class="stats-grid hidden" id="statsPanel">
+                <div class="stat-card">
+                    <div class="stat-value" id="statDist">0</div>
+                    <div class="stat-label">Дистанция (км)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statElev">0</div>
+                    <div class="stat-label">Набор высоты (м)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statTime">0:00</div>
+                    <div class="stat-label">Время в пути</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statPoints">0</div>
+                    <div class="stat-label">Точек в треке</div>
+                </div>
+            </div>
         </div>
+
 
         <!-- График высот -->
         <div class="chart-container hidden" id="chartPanel">
