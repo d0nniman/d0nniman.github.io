@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SimpleChatting</title>
+  <link rel="stylesheet" href="./css/sidebar.css">
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f4f4f9; }
+    #auth-form, #chat-interface { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    #chat-interface { display: none; }
+    input, button { width: 100%; margin: 5px 0; padding: 10px; box-sizing: border-box; }
+    button { background: #007bff; color: white; border: none; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    #messages { height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; background: #fff; }
+    .message { margin: 5px 0; padding: 5px; background: #e9ecef; border-radius: 4px; }
+    .message strong { color: #007bff; }
+    .error { color: red; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+        <div class="sidebar-inner">
+            <h2 class="sidebar-name">Меню сайта</h2>
+            <ul>
+                <a href="/index.html"><li>GPX конвертер</li></a>
+                <a href="/gpx-viewer.html"><li>Обозреватель треков</li></a>
+                <a href="/chat.html"><li>ПростоЧат</li></a>
+            </ul>
+        </div>
+    </div>
+  <h2>SimpleChatting</h2>
+  
+  <div id="auth-form">
+    <input type="text" id="username" placeholder="Логин (мин. 3 символа)">
+    <input type="password" id="password" placeholder="Пароль (мин. 6 символов)">
+    <button onclick="register()">Регистрация</button>
+    <button onclick="login()">Войти</button>
+    <p id="auth-error" class="error"></p>
+  </div>
+
+  <div id="chat-interface">
+    <div id="messages"></div>
+    <input type="text" id="msg-input" placeholder="Введите сообщение...">
+    <button onclick="sendMessage()">Отправить</button>
+    <button onclick="logout()" style="background: #dc3545;">Выйти</button>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    // ЗАМЕНИ ЭТОТ URL на адрес твоего Cloudflare Tunnel (см. Шаг 3)
+    const API_URL = 'https://твой-уникальный-адрес.trycloudflare.com'; 
+    
+    let socket = null;
+    let currentUser = null;
+
+    function getAuthHeaders() {
+      const token = localStorage.getItem('token');
+      return token ? { 'Authorization': `Bearer ${token}` } : {};
+    }
+
+    async function register() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const res = await fetch(`${API_URL}/api/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (res.ok) alert('Успешно! Теперь войдите.');
+      else document.getElementById('auth-error').textContent = data.error;
+    }
+
+    async function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const res = await fetch(`${API_URL}/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('token', data.token);
+        currentUser = data.username;
+        initChat();
+      } else {
+        document.getElementById('auth-error').textContent = data.error;
+      }
+    }
+
+    async function initChat() {
+      document.getElementById('auth-form').style.display = 'none';
+      document.getElementById('chat-interface').style.display = 'block';
+      
+      // Загрузка истории
+      const res = await fetch(`${API_URL}/api/messages`, { headers: getAuthHeaders() });
+      if (res.ok) {
+        const messages = await res.json();
+        const container = document.getElementById('messages');
+        container.innerHTML = '';
+        messages.forEach(msg => appendMessage(msg.username, msg.text, msg.timestamp));
+      }
+
+      // Подключение WebSocket
+      socket = io(API_URL, { auth: { token: localStorage.getItem('token') } });
+      socket.on('chat_message', (data) => {
+        appendMessage(data.username, data.text, data.timestamp);
+      });
+      
+      socket.on('connect_error', (err) => {
+        if (err.message === 'Неверный токен') logout();
+      });
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('msg-input');
+      const text = input.value.trim();
+      if (text && socket) {
+        socket.emit('chat_message', text);
+        input.value = '';
+      }
+    }
+
+    function appendMessage(username, text, timestamp) {
+      const container = document.getElementById('messages');
+      const div = document.createElement('div');
+      div.className = 'message';
+      
+      // БЕЗОПАСНОСТЬ: используем textContent для защиты от XSS
+      const userStrong = document.createElement('strong');
+      userStrong.textContent = username + ': ';
+      const textSpan = document.createElement('span');
+      textSpan.textContent = text;
+      
+      div.appendChild(userStrong);
+      div.appendChild(textSpan);
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      if (socket) socket.disconnect();
+      location.reload();
+    }
+
+    // Авто-вход при наличии токена
+    if (localStorage.getItem('token')) {
+      // Простая проверка валидности токена перед инициализацией
+      fetch(`${API_URL}/api/messages`, { headers: getAuthHeaders() })
+        .then(res => res.ok ? initChat() : logout());
+    }
+  </script>
+</body>
+</html>
